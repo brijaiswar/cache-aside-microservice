@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.0' // Use a recent Spring Boot 3 version
+    id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'com.wisepay'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17' // Specify Java 17
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+        // Spring Boot Core and Web (for REST endpoint)
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+
+        // Spring Boot Cache Abstraction
+        implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+        // Spring Data Redis Starter (automatically includes client like Lettuce)
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+        // Lombok (Optional, but highly recommended for DTOs/Entities)
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        // Testing
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    }
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

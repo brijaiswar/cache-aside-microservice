@@ -62,7 +62,7 @@ class ProductIntegrationTest {
     }
 
     @Test
-    @DisplayName("8.1a: Full CRUD round-trip — POST, GET, PUT, DELETE")
+    @DisplayName("8.1a: Full CRUD round-trip â€” POST, GET, PUT, DELETE")
     void fullCrudRoundTrip() {
         // CREATE
         ResponseEntity<ProductResponse> createResp = restTemplate.postForEntity(
@@ -114,7 +114,7 @@ class ProductIntegrationTest {
     }
 
     @Test
-    @DisplayName("8.1c: List completeness — GET /api/v1/products returns all inserted products")
+    @DisplayName("8.1c: List completeness â€” GET /api/v1/products returns all inserted products")
     void listCompletenessAfterInserts() {
         int initialCount = restTemplate.getForObject("/api/v1/products", List.class).size();
 

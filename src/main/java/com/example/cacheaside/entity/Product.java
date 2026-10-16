@@ -1,20 +1,43 @@
 package com.example.cacheaside.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
+/**
+ * Product entity representing a cached product in the system.
+ * Implements cache-aside pattern with Redis and PostgreSQL persistence.
+ */
 @Entity
-@Table(name = "products")
+@Table(name = "products", indexes = {
+    @Index(name = "idx_product_category", columnList = "category"),
+    @Index(name = "idx_product_name", columnList = "name")
+})
+@EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString(exclude = {"description"})
+@EqualsAndHashCode(of = "id")
 public class Product implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String name;
 
     @Column(columnDefinition = "TEXT")
@@ -23,43 +46,34 @@ public class Product implements Serializable {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "stock_quantity")
     private Integer stockQuantity;
 
-    @Column
+    @Column(length = 100)
     private String category;
 
-    @Column(nullable = false, updatable = false)
+    @CreatedDate
+    @Column(nullable = false, updatable = false, name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @LastModifiedDate
+    @Column(nullable = false, name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now(ZoneOffset.UTC);
-        updatedAt = LocalDateTime.now(ZoneOffset.UTC);
+    @Version
+    private Long version; // Optimistic locking
+
+    /**
+     * Business method to check if product is in stock
+     */
+    public boolean isInStock() {
+        return stockQuantity != null && stockQuantity > 0;
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now(ZoneOffset.UTC);
+    /**
+     * Business method to check if product is low on stock
+     */
+    public boolean isLowStock(int threshold) {
+        return stockQuantity != null && stockQuantity > 0 && stockQuantity <= threshold;
     }
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
-    public Integer getStockQuantity() { return stockQuantity; }
-    public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

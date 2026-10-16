@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
- * Property 5: Cache-Aside Read — Miss Populates Cache
+ * Property 5: Cache-Aside Read â€” Miss Populates Cache
  * Validates: Requirement 3.2
  *
  * Tests that on a cache miss, repository is called exactly once, result is cached,
@@ -59,14 +59,14 @@ class CacheMissPropertyTest {
     void cacheMissPopulatesCache() {
         when(productRepository.findById(2L)).thenReturn(Optional.of(sampleProduct));
 
-        // First call — cache miss, loads from repository
+        // First call â€” cache miss, loads from repository
         ProductResponse first = productService.getById(2L);
         assertThat(first.id()).isEqualTo(2L);
 
         // Verify repository was called once
         verify(productRepository, times(1)).findById(2L);
 
-        // Second call — should now be served from cache
+        // Second call â€” should now be served from cache
         ProductResponse second = productService.getById(2L);
         assertThat(second.id()).isEqualTo(2L);
 

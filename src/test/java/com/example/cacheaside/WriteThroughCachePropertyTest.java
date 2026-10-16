@@ -64,7 +64,7 @@ class WriteThroughCachePropertyTest {
 
         assertThat(created.id()).isEqualTo(10L);
 
-        // getById should be served from cache — repository.findById should NOT be called
+        // getById should be served from cache â€” repository.findById should NOT be called
         when(productRepository.findById(10L)).thenReturn(Optional.of(saved));
         productService.getById(10L);
 

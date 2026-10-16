@@ -1,4 +1,4 @@
-version: '3.9'
+﻿version: '3.9'
 
 services:
   postgres:
@@ -8,26 +8,60 @@ services:
       POSTGRES_DB: cacheaside
       POSTGRES_USER: cacheaside
       POSTGRES_PASSWORD: cacheaside
+      POSTGRES_INITDB_ARGS: "-E UTF8"
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U cacheaside"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
+    networks:
+      - cacheaside-network
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
     container_name: cacheaside-redis
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru --appendonly yes
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 5s
+    networks:
+      - cacheaside-network
+    restart: unless-stopped
+
+  # Optional: Redis Commander for Redis UI
+  redis-commander:
+    image: ghcr.io/joeferner/redis-commander:latest
+    container_name: cacheaside-redis-ui
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - cacheaside-network
+    restart: unless-stopped
+
+networks:
+  cacheaside-network:
+    driver: bridge
 
 volumes:
   postgres_data:
+    driver: local
+  redis_data:
+    driver: local

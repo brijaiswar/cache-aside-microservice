@@ -12,30 +12,57 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    // Spring Boot Starters
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    
+    // Lombok for reducing boilerplate
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // Database
     runtimeOnly 'org.postgresql:postgresql'
+    
+    // Documentation
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+    
+    // Jackson
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-
+    
+    // Monitoring
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    
     // Test dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'com.redis:testcontainers-redis:2.2.2'
-
-    // H2 for unit tests (in-memory DB, no real PostgreSQL needed)
     testRuntimeOnly 'com.h2database:h2'
+    
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 test {
     useJUnitPlatform()
+}
+
+// Enable Spring Boot build info for Actuator
+springBoot {
+    buildInfo()
 }

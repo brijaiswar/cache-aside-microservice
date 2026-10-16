@@ -47,7 +47,7 @@ class ProductServiceCacheTest {
     }
 
     @Test
-    @DisplayName("7.1a: Cache hit — second getById call does not invoke repository")
+    @DisplayName("7.1a: Cache hit â€” second getById call does not invoke repository")
     void cacheHitDoesNotHitRepository() {
         Product p = buildProduct(100L, "Cache Hit Product");
         when(productRepository.findById(100L)).thenReturn(Optional.of(p));
@@ -59,7 +59,7 @@ class ProductServiceCacheTest {
     }
 
     @Test
-    @DisplayName("7.1b: Cache miss — repository called, result stored, second call skips DB")
+    @DisplayName("7.1b: Cache miss â€” repository called, result stored, second call skips DB")
     void cacheMissLoadsAndPopulatesCache() {
         Product p = buildProduct(101L, "Cache Miss Product");
         when(productRepository.findById(101L)).thenReturn(Optional.of(p));

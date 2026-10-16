@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 /**
- * Property 4: Cache-Aside Read — Hit Avoids Database
+ * Property 4: Cache-Aside Read â€” Hit Avoids Database
  * Validates: Requirement 3.1
  *
  * Tests that once a product is cached, subsequent reads do not invoke the repository.
@@ -62,11 +62,11 @@ class CacheHitPropertyTest {
     void cacheHitAvoidsDatabase() {
         when(productRepository.findById(1L)).thenReturn(Optional.of(sampleProduct));
 
-        // First call — should hit the repository (cache miss)
+        // First call â€” should hit the repository (cache miss)
         ProductResponse first = productService.getById(1L);
         assertThat(first.id()).isEqualTo(1L);
 
-        // Second call — should hit cache, NOT the repository
+        // Second call â€” should hit cache, NOT the repository
         ProductResponse second = productService.getById(1L);
         assertThat(second.id()).isEqualTo(1L);
 
